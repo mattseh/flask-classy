@@ -220,7 +220,14 @@ class FlaskView(object):
         """Returns the route base to use for the current class."""
 
         if hasattr(cls, "route_base"):
-            route_base = cls.route_base
+            if issubclass(cls.route_base, FlaskView):
+                route_base = cls.route_base.get_route_base()+'/'
+                if cls.__name__.endswith("View"):
+                    route_base += cls.__name__[:-4].lower()
+                else:
+                    route_base += cls.__name__.lower()                
+            else:
+                route_base = cls.route_base
         else:
             if cls.__name__.endswith("View"):
                 route_base = cls.__name__[:-4].lower()
