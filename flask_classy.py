@@ -12,7 +12,7 @@ __version__ = "0.5.2"
 
 import functools
 import inspect
-from flask import Response, make_response
+from flask import Response, make_response, render_template
 import re
 
 _temp_rule_cache = None
@@ -126,6 +126,10 @@ class FlaskView(object):
             cls.route_base = cls.orig_route_base
             del cls.orig_route_base
 
+        for name, member_cls in inspect.getmembers(cls, inspect.isclass):
+            if issubclass(member_cls, FlaskView):
+                member_cls.register(app, route_base=cls.get_route_base()+'/'+member_cls.get_route_base(), subdomain=subdomain)
+
 
 
     @classmethod
@@ -220,14 +224,7 @@ class FlaskView(object):
         """Returns the route base to use for the current class."""
 
         if hasattr(cls, "route_base"):
-            if issubclass(cls.route_base, FlaskView):
-                route_base = cls.route_base.get_route_base()+'/'
-                if cls.__name__.endswith("View"):
-                    route_base += cls.__name__[:-4].lower()
-                else:
-                    route_base += cls.__name__.lower()                
-            else:
-                route_base = cls.route_base
+            route_base = cls.route_base
         else:
             if cls.__name__.endswith("View"):
                 route_base = cls.__name__[:-4].lower()
@@ -245,6 +242,3 @@ class FlaskView(object):
         :param method_name: the method name to use when building a route name
         """
         return cls.__name__ + ":%s" % method_name
-
-
-
