@@ -12,7 +12,7 @@ __version__ = "0.5.2"
 
 import functools
 import inspect
-from flask import Response, make_response, render_template
+from flask import Response, make_response
 import re
 
 _temp_rule_cache = None
