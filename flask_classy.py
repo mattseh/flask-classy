@@ -86,9 +86,12 @@ class FlaskView(object):
         members = cls.find_member_methods()
         special_methods = ["get", "put", "patch", "post", "delete", "index"]
 
-        for name, value in members: 
+        for name, value in members:
             proxy = cls.make_proxy_method(name)
-            route_name = cls.build_route_name(name)
+            if cls_route_name:
+                route_name = cls_route_name+':'+cls.build_route_name(name)
+            else:
+                route_name = cls.build_route_name(name)
 
             if hasattr(cls, "_rule_cache") and name in cls._rule_cache:
                 for idx, cached_rule in enumerate(cls._rule_cache[name]):
@@ -127,10 +130,12 @@ class FlaskView(object):
             del cls.orig_route_base
 
         for name, member_cls in inspect.getmembers(cls, inspect.isclass):
+            if not cls_route_name:
+                cls_route_name = cls.__name__
             if issubclass(member_cls, FlaskView):
                 member_cls.register(app,
                     route_base=cls.get_route_base()+'/'+member_cls.get_route_base(),
-                    cls_route_name=(cls_route_name or '') + cls.__name__,
+                    cls_route_name=cls_route_name,
                     subdomain=subdomain)
 
 
