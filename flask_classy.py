@@ -129,9 +129,12 @@ class FlaskView(object):
             cls.route_base = cls.orig_route_base
             del cls.orig_route_base
 
+        if not cls_route_name:
+            cls_route_name = cls.__name__
+        else:
+            cls_route_name += ':' + cls.__name__
+        print cls_route_name
         for name, member_cls in inspect.getmembers(cls, inspect.isclass):
-            if not cls_route_name:
-                cls_route_name = cls.__name__
             if issubclass(member_cls, FlaskView):
                 member_cls.register(app,
                     route_base=cls.get_route_base()+'/'+member_cls.get_route_base(),
