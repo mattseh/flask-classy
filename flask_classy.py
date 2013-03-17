@@ -133,7 +133,6 @@ class FlaskView(object):
             cls_route_name = cls.__name__
         else:
             cls_route_name += ':' + cls.__name__
-        print cls_route_name
         for name, member_cls in inspect.getmembers(cls, inspect.isclass):
             if issubclass(member_cls, FlaskView):
                 member_cls.register(app,
