@@ -52,7 +52,7 @@ class FlaskView(object):
     __metaclass__ = _FlaskViewMeta
 
     @classmethod
-    def register(cls, app, route_base=None, subdomain=None):
+    def register(cls, app, route_base=None, cls_route_name=None, subdomain=None):
         """Registers a FlaskView class for use with a specific instance of a
         Flask app. Any methods not prefixes with an underscore are candidates
         to be routed and will have routes registered when this method is
@@ -86,7 +86,7 @@ class FlaskView(object):
         members = cls.find_member_methods()
         special_methods = ["get", "put", "patch", "post", "delete", "index"]
 
-        for name, value in members:
+        for name, value in members: 
             proxy = cls.make_proxy_method(name)
             route_name = cls.build_route_name(name)
 
@@ -128,7 +128,10 @@ class FlaskView(object):
 
         for name, member_cls in inspect.getmembers(cls, inspect.isclass):
             if issubclass(member_cls, FlaskView):
-                member_cls.register(app, route_base=cls.get_route_base()+'/'+member_cls.get_route_base(), subdomain=subdomain)
+                member_cls.register(app,
+                    route_base=cls.get_route_base()+'/'+member_cls.get_route_base(),
+                    cls_route_name=(cls_route_name or '') + cls.__name__,
+                    subdomain=subdomain)
 
 
 
