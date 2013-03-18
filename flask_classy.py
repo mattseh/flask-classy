@@ -141,6 +141,8 @@ class FlaskView(object):
                     route_base=cls.get_route_base()+'/'+member_cls.get_route_base(),
                     cls_route_name=cls_route_name,
                     subdomain=subdomain)
+                if not hasattr(member_cls, 'parent_cls'):
+                    member_cls.parent_cls = cls
 
 
 
