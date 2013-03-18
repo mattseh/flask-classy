@@ -84,7 +84,7 @@ class FlaskView(object):
                 subdomain = cls.subdomain
 
         members = cls.find_member_methods()
-        special_methods = ["get", "put", "patch", "post", "delete", "index"]
+        special_methods = ["get", "put", "patch", "post", "delete", "index", "edit"]
 
         for name, value in members:
             proxy = cls.make_proxy_method(name)
@@ -114,6 +114,8 @@ class FlaskView(object):
             elif name in special_methods:
                 if name in ["get", "index"]:
                     methods = ["GET"]
+                elif name == "edit":
+                    methods = ["POST"]
                 else:
                     methods = [name.upper()]
 
